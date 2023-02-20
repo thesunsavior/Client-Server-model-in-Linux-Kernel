@@ -8,6 +8,8 @@
 #include <sys/stat.h>
 #include <unistd.h>
 #include <thread>
+#include <error.h>
+#include <string.h>
 
 #include "message.h"
 
@@ -28,8 +30,22 @@ public:
         this->number_of_process = number_of_process;
 
         // connect to server pipe
-        const char *named_pipe = "/pipe/pipe_client" + pipe_id;
-        fd = open(named_pipe, O_RDONLY);
+        std::string temp = "/home/thesunsavior/lab/OS_Proj/pipe/pipe_client" + std::to_string(pipe_id);
+
+        const char *named_pipe = (char *)temp.c_str();
+        fd = open(named_pipe, O_RDONLY | O_NONBLOCK);
+
+        if (fd == -1)
+        {
+            std::cerr << "-Client failed to open named pipe-\n"
+                      << strerror(errno)
+                      << "\n ----------------------------"
+                      << std::endl; // name check  delete afterward
+        }
+        else
+        {
+            std::cout << "Client successfully opened named pipe" << std::endl;
+        }
     }
 
     int ReadFromAdmin();

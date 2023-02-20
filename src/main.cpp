@@ -81,11 +81,11 @@ int main () {
             }
             else
             {
-                // std::cout << "Client received good morning!"
-                //           << std::endl;
+                std::cout << "Client received good morning!"
+                          << std::endl;
             }
 
-            // host->Update();
+            host->Update();
          }
 
          host->Update();
