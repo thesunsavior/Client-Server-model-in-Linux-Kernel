@@ -59,6 +59,7 @@ int main () {
             // read from server
             int msg;
             msg = host->ReadFromAdmin();
+            sleep(2);
             if (msg == MessageType::ServerAssign && !IsServer)
             {
                 std::cout << getpid() << " has receive server assignment" << std::endl;
@@ -70,7 +71,6 @@ int main () {
                 // msg = host->ReadFromAdmin();
 
                 IsServer = true;
-                std::cout << "i want too break freee" << std::endl;
                 break;
             }
 

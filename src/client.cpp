@@ -30,12 +30,15 @@ void Server::BroadCastToClient(std::string pipe_file)
                   << strerror(errno)
                   << "\n ----------------------------"
                   << std::endl; // name check  delete afterward
-        exit(0);
+
+        // stall thread
+        while (true)
+            usleep(1000);
     }
     while (true)
     {
+        sleep(2);
         write(fd, "Hi", sizeof("Hi"));
-        sleep(1);
         std::cout << "Server have sent to " << pipe_name << std::endl;
     }
 }
@@ -47,7 +50,6 @@ int Client::ReadFromAdmin()
     if (result == -1)
     {
         std::cerr << "Client " << getpid() << " read from admin failed" << std::endl;
-        exit(0);
     }
 
     return buf - '0';

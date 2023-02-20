@@ -21,6 +21,7 @@ bool Admin::AdminUpdate()
             {
                 dead_server = true;
                 std::cout << "Server is dead, reassigning...\n";
+                sleep(2);
             }
 
             // delete from client list
@@ -31,7 +32,10 @@ bool Admin::AdminUpdate()
     if (server_pid == -1 || dead_server)
     {
         if (client_list.size() == 0)
-            return false;
+        {
+            std::cerr << "All process are gone, exiting " << std::endl;
+            exit(0);
+        }
 
         AssignServer();
 
@@ -61,7 +65,7 @@ bool Admin::AdminUpdate()
 
 void Admin::AssignServer()
 {
-    std::cout << "Assigning server..." << std::endl;
+    std::cout << "+++++++++++++++++++++++++++++++++ Assigning server... ++++++++++++++++++++++++++++++++++++++++" << std::endl;
     if (client_list.size() <= 0)
     {
         std::cerr << "List is currently empty!" << std::endl;
@@ -75,6 +79,7 @@ void Admin::AssignServer()
 
 void Admin::SendToClient(MessageType type, int pipe_id)
 {
+    sleep(2);
     char msg = '0' + type;
     write(pipefd[pipe_id][1], &msg, 1);
 }
