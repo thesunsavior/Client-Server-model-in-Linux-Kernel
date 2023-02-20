@@ -20,7 +20,8 @@ bool Admin::AdminUpdate()
             if (server_pid == client_list[i])
             {
                 dead_server = true;
-                std::cout << "Server is dead, reassigning...\n";
+                this->logger.Log("Server is dead, reassigning..", BOTH);
+                // std::cout << "Server is dead, reassigning...\n";
                 sleep(2);
             }
 
@@ -33,7 +34,8 @@ bool Admin::AdminUpdate()
     {
         if (client_list.size() == 0)
         {
-            std::cerr << "All process are gone, exiting " << std::endl;
+            this->logger.Log("All process are gone, exiting");
+            // std::cerr << "All process are gone, exiting " << std::endl;
             exit(0);
         }
 
@@ -74,7 +76,8 @@ void Admin::AssignServer()
     server_pid = client_list[0]; 
     SendToClient (MessageType::ServerAssign,pipe_id[server_pid]);
     sleep(2); // make sure client read it
-    std::cout << "assignment sent to client" << std::endl;
+    logger.Log("assignment sent to client " + std::to_string(server_pid), BOTH);
+    // std::cout << "assignment sent to client" << std::endl;
 }
 
 void Admin::SendToClient(MessageType type, int pipe_id)
@@ -112,12 +115,16 @@ bool Admin::CreateServerPipeForAll()
         int result = mkfifo(PipeName, 0666);
         if (result == -1)
         {
-            std::cerr << "Error making server pipes" << std::endl;
-            std::cerr << strerror(errno) << std::endl;
+            logger.Log("Error making server pipes", CONSOLE, ERROR);
+            logger.Log(strerror(errno), BOTH, ERROR);
+
+            // std::cerr << "Error making server pipes" << std::endl;
+            // std::cerr << strerror(errno) << std::endl;
             return false;
         }
         else
-            std::cout << "Successfully created pipe " << std::endl;
+            // std::cout << "Successfully created pipe " << std::endl;
+            logger.Log("Successfully created pipe ", CONSOLE);
     }
     return true ;
 }

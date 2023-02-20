@@ -11,6 +11,7 @@
 #include <error.h>
 #include <string.h>
 
+#include "util/logger.h"
 #include "message.h"
 
 #define MAX_BUF 1024
@@ -22,6 +23,8 @@ public:
     int number_of_process;
     int fd;
     char buf[MAX_BUF];
+
+    Logger logger = Logger(LogActor::CLIENT, LogType::CONSOLE, LogLevel::ANNOUNCEMENT);
 
     Client() = default;
     Client(int admin_pipe[2], int pipe_id,const int number_of_process){
@@ -58,6 +61,7 @@ class Server : public Client{
 public:
     int *fd;
     std::thread *threads;
+    Logger logger = Logger(LogActor::SERVER, LogType::CONSOLE, LogLevel::ANNOUNCEMENT);
 
     Server() = default;
     Server(int admin_pipe[2], int pipe_id, const int number_of_process)

@@ -8,7 +8,8 @@ void Server::Update()
     {
         int fd;
         std::string temp = "/home/thesunsavior/lab/OS_Proj/pipe/pipe_client" + std::to_string(i);
-        std::cout << "create pipe > " << temp << std::endl;
+        logger.Log("create pipe > " + temp);
+        // std::cout << "create pipe > " << temp << std::endl;
         threads[i] = std::thread(&Server::BroadCastToClient, temp);
         threads[i].detach();
     }
@@ -39,7 +40,6 @@ void Server::BroadCastToClient(std::string pipe_file)
     {
         sleep(2);
         write(fd, "Hi", sizeof("Hi"));
-        std::cout << "Server have sent to " << pipe_name << std::endl;
     }
 }
 
@@ -49,7 +49,8 @@ int Client::ReadFromAdmin()
     int result = read(admin_pipe[0], &buf, 1);
     if (result == -1)
     {
-        std::cerr << "Client " << getpid() << " read from admin failed" << std::endl;
+        logger.Log("read from admin failed", BOTH, ERROR);
+        // std::cerr << "Client " << getpid() << " read from admin failed" << std::endl;
     }
 
     return buf - '0';
@@ -60,6 +61,9 @@ void Client::Update()
 
     char *message;
     message = ReadFromServer();
+
+    logger.Log(" receieve a message: \" " + (std::string)message + "\"");
+
     std::cout << getpid() << " receieve a message: \" " << message << "\"" << std::endl;
 }
 
@@ -68,11 +72,15 @@ char *Client::ReadFromServer()
     int result = read(fd, &buf, MAX_BUF);
     if (result == -1)
     {
-        std::cout << "pipe is empty " << std::endl;
+        logger.Log("pipe is empty", CONSOLE, ERROR);
+
+        std::cout << "pipe is empty" << std::endl;
     }
     else
     {
-        std::cout << "Received msg" << std::endl;
+        logger.Log("Received msg", CONSOLE, ANNOUNCEMENT);
+
+        // std::cout << "Received msg" << std::endl;
     }
     return buf;
 }
@@ -80,7 +88,10 @@ char *Client::ReadFromServer()
 void Client::SendToAdmin(MessageType type)
 {
     char msg = '0' + type;
-    std::cout << "Sending to admin..." << std::endl;
+    logger.Log("Sending to admin...", BOTH, ANNOUNCEMENT);
+
+    // std::cout << "Sending to admin..." << std::endl;
     write(admin_pipe[1], &msg, 1);
-    std::cout << "Sent to admin" << std::endl;
+    logger.Log("Sent to admin...", BOTH, ANNOUNCEMENT);
+    // std::cout << "Sent to admin" << std::endl;
 }

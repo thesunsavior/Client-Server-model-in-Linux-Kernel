@@ -21,7 +21,7 @@ int main () {
         // create a pipe for each client
         if (pipe(ad.pipefd[i]) == -1)
         {
-            std::cerr << "Error creating pipe";
+            ad.logger.Log("Error creating pipe", BOTH, ERROR);
             return 0;
         }
 
@@ -29,7 +29,7 @@ int main () {
         pid_holder = fork();
         if (pid_holder == -1)
         {
-            std::cerr <<"Error creating child process";
+            ad.logger.Log("Error creating child process", BOTH, ERROR);
             return 0;
          }
          else if (pid_holder == 0){
@@ -38,7 +38,9 @@ int main () {
          else {
             ad.pipe_id[pid_holder] = i;
             ad.AddClient(pid_holder);
-            std::cout << "child pid " << pid_holder << " was created." << std::endl;
+            ad.logger.Log("child pid " + std::to_string(pid_holder) + " was created.", BOTH);
+
+            // std::cout << "child pid " << pid_holder << " was created." << std::endl;
          }
     }
 
@@ -51,7 +53,8 @@ int main () {
     }else 
     if (pid_holder == 0) {
          Client *host = new Client(ad.pipefd[id], id, ad.number_of_process);
-         std::cout << "I am the child " << getpid() << std::endl;
+         host->logger.Log("I am the child " + std::to_string(getpid()), BOTH);
+         //  std::cout << "I am the child " << getpid() << std::endl;
 
          while (!IsServer)
          {
@@ -62,6 +65,7 @@ int main () {
             sleep(2);
             if (msg == MessageType::ServerAssign && !IsServer)
             {
+                host->logger.Log("Received server assignment", BOTH);
                 std::cout << getpid() << " has receive server assignment" << std::endl;
                 delete host;
                 host = new Server(ad.pipefd[id], id, ad.number_of_process);
@@ -76,13 +80,17 @@ int main () {
 
             if (msg != MessageType::GoodMorning)
             {
-                std::cerr << "Expected GoodMorning receive some different order \n";
+                host->logger.Log("Expected GoodMorning receive some different order", CONSOLE, ERROR);
+
+                // std::cerr << "Expected GoodMorning receive some different order \n";
                 continue; // spin until server is assigned
             }
             else
             {
-                std::cout << "Client received good morning!"
-                          << std::endl;
+                host->logger.Log("Client received good morning!", CONSOLE);
+
+                // std::cout << "Client received good morning!"
+                //           << std::endl;
             }
 
             host->Update();

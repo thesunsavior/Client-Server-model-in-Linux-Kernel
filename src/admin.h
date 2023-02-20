@@ -7,6 +7,7 @@
 #include <sys/stat.h>
 #include <sys/types.h>
 
+#include "util/logger.h"
 #include "message.h"
 #include "client.h"
 
@@ -19,6 +20,7 @@ public:
     std::vector<pid_t> client_list;
     std::map<pid_t, int> pipe_id;
     pid_t server_pid = -1;
+    Logger logger = Logger(LogActor::ADMIN, LogType::CONSOLE, LogLevel::ANNOUNCEMENT);
 
     void AssignServer();
     void SendToClient(MessageType type, int pipe_id);
