@@ -11,12 +11,15 @@
 
 #include "message.h"
 
+#define MAX_BUF 1024
+
 class Client  {
 public:
     int pipe_id;
     int *admin_pipe;
     int number_of_process;
-    int fd; 
+    int fd;
+    char buf[MAX_BUF];
 
     Client() = default;
     Client(int admin_pipe[2], int pipe_id,const int number_of_process){
@@ -31,8 +34,8 @@ public:
 
     int ReadFromAdmin();
     char* ReadFromServer();
-    void SendToAdmin(MessageType type); 
-    void Update();
+    void SendToAdmin(MessageType type);
+    virtual void Update();
 };
 
 class Server : public Client{
@@ -50,7 +53,7 @@ public:
         threads = new std::thread[number_of_process];
     }
 
-    static void BroadCastToClient(char *pipe_file);
+    static void BroadCastToClient(std::string pipe_file);
     void Update();
 };
 
