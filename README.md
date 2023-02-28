@@ -31,3 +31,4 @@ start broadcasting its message as usual
 
 The overall model is as follow: 
 
+![Screenshot](Overall_model.png)
